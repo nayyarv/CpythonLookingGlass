@@ -19,10 +19,39 @@ def main(config):
 - “But += is more pythonic. Doesn’t matter for small lists”
 - Good excuse to avoid work!!
 
----?code=source/simplesol.py&lang=python&title=Simple Solution
+---
+
+### Simple Solution - Extend
+
+```python
+# extend
+>>> a = [1]
+>>> b = a
+>>> a.extend([2])
+>>> a
+[1, 2]
+>>> b
+[1, 2]
+```
+
+---
+### Simple Solution - +=
+```python
+# +=
+>>> a = [1]
+>>> b = a
+>>> a += [2]
+>>> a
+[1, 2]
+>>> b
+[1, 2]
+```
  
 
 ---
-### Too simple!!
+@snap[center]
+### Too Easy!!
+@endsnap
 
+---
 
