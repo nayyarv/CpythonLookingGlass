@@ -1,11 +1,11 @@
-# Through the CPython Looking Glass
+### Through the CPython Looking Glass
 
-## `extend` and `+=` on lists
-## Varun Nayyar
+#### `extend` and `+=` on lists
+#### Varun Nayyar
 
 ---
 
-# Setting the stage
+### Setting the stage
 
 ```python
 def main(config):
@@ -23,6 +23,6 @@ def main(config):
  
 
 ---
-# Too simple
+### Too simple!!
 
 
