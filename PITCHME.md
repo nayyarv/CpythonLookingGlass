@@ -1,5 +1,5 @@
-### Through the CPython Looking Glass
-
+## Through the CPython Looking Glass
+<br><br>
 #### `extend` and `+=` on lists
 #### Varun Nayyar
 
@@ -21,7 +21,7 @@ def main(config):
 
 ---
 
-### Simple Solution - Extend
+### Simple Solution - `extend`
 
 ```python
 # extend
@@ -35,7 +35,7 @@ def main(config):
 ```
 
 ---
-### Simple Solution - +=
+### Simple Solution - `+=`
 ```python
 # +=
 >>> a = [1]
@@ -50,8 +50,29 @@ def main(config):
 
 ---
 @snap[center]
-### Too Easy!!
-@endsnap
+## Too Easy!!
+## We need to go deeper!
+@snapend
 
 ---
+
+### Binary Ops in Python
+
+- Let’s use [PEP 465 - Matmul(@)](https://github.com/python/cpython/commit/d51374ed78a3e3145911a16cdf3b9b84b3ba7d15) as a guide!
+- `ceval.c` executes the ast
+- `object.h` defines the structs of functions
+- `abstract.c` defines how operations are carried out
+- `listobject.c` defines how lists behave
+
+
+---?code=source/ceval.c&lang=c&title=ceval.c
+@[1280-1304]
+
+---
+### Addition in Python
+
+
+
+
+
 
