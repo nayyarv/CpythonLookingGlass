@@ -50,61 +50,7 @@ def main(config):
 ---
 ### Simple Solution - `timeit`
 
-Note: run with `N` repeats and 1 run to reset and not deal with list creation times.
-Also, keep 
-```python
-setupStr = """
-a = list(range({N})); b=list(range({N}, 2*{N}))
-"""
-
-statement = {
-    'ext': "a.extend(b)",
-    'iadd': "a += b",
-    'add': "a + b"
-}
-
-for Npow in range(1, 7):
-    for method, stmt in statement.items():
-        time = min(timeit.repeat(stmt, setup.format(N=10**Npow, repeat=10**(7-Npow), number=1))
-```
-
-
----
-### Simple Solution - `timeit`
-
-Note: run with `N` repeats and 1 run to reset and not deal with list creation times.
-Also, keep 
-```python
-setupStr = """
-a = list(range({N})); b=list(range({N}, 2*{N}))
-"""
-
-statement = {
-    'ext': "a.extend(b)",
-    'iadd': "a += b",
-    'add': "a + b"
-}
-
-for Npow in range(1, 7):
-    for method, stmt in statement.items():
-        time = min(timeit.repeat(stmt, setup.format(N=10**Npow, repeat=10**(7-Npow), number=1))
-```
-
----
-### Simple Solution - `timeit`
-
-Times reported are `time*num_repeat` for standardisation
-
-|   Npow |       ext |      iadd |       add |
-|-------:|----------:|----------:|----------:|
-|      1 | 0.180997  | 0.149972  | 0.173983  |
-|      2 | 0.0395987 | 0.0357977 | 0.0569009 |
-|      3 | 0.0146602 | 0.0140999 | 0.04467   |
-|      4 | 0.017182  | 0.017094  | 0.053719  |
-|      5 | 0.0521498 | 0.0515629 | 0.0768844 |
-|      6 | 0.0633772 | 0.0634223 | 0.159378  |
-
-
+- run with `N` repeats and 1 run to reset and not deal with list creation times.
 
 ---
 ### Simple Solution - `timeit`
@@ -114,7 +60,12 @@ Times reported are `time*num_repeat` for standardisation
 ---
 
 @snap[center]
-## Solved? |
+## Solved?
+@snapend
+
+---
+
+@snap[center]
 ## Too Easy!! 
 ## We need to go deeper!
 @snapend
