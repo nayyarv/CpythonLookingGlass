@@ -48,10 +48,11 @@ def main(config):
 ```
 
 ---
-### Simple Solution - `timeit`
+#### Simple Solution - `timeit`
 
-- run with `N` repeats and 1 run to reset and not deal with list creation times.
 ![Graph](assets/timer.png)
+
+`N` repeats, 1 run
 
 ---
 
@@ -78,9 +79,7 @@ def main(config):
 
 
 --- 
-### Addition in Python
-
-#### ceval.c:1280-1304
+### Addition: ceval.c:1280-1304
 
 ```c
 TARGET(BINARY_ADD) {
@@ -109,8 +108,9 @@ TARGET(BINARY_ADD) {
     DISPATCH();
 }
 ```
+@[18,20](We'll discuss later)
 
-+++
+---
 
 ### Addition in Python
 #### object.h

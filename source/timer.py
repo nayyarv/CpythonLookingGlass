@@ -5,9 +5,9 @@ a = list(range({N})); b=list(range({N}, 2*{N}))
 """
 
 statement = {
+    'add': "a + b"
     'ext': "a.extend(b)",
     'iadd': "a += b",
-    'add': "a + b"
 }
 
 
