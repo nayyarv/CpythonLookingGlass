@@ -46,28 +46,24 @@ def main(config):
 >>> b
 [1, 2]
 ```
- 
+
 ---
 ### Simple Solution - `timeit`
 
 - run with `N` repeats and 1 run to reset and not deal with list creation times.
-
----
-### Simple Solution - `timeit`
-
 ![Graph](assets/timer.png)
 
 ---
 
 @snap[center]
-## Solved?
+<h1> Solved? </h1>
 @snapend
 
 ---
 
 @snap[center]
-## Too Easy!! 
-## We need to go deeper!
+<h2> Too Easy!! </h2>
+<h2> We need to go deeper! </h2>
 @snapend
 
 ---
