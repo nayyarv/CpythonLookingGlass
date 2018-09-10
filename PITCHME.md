@@ -112,11 +112,12 @@ TARGET(BINARY_ADD) {
 
 @[5-10](Some Nice Comments)
 @[18,20](We'll discuss later)
-@[19](We call PyNumber_Add)
+@[17](We call PyNumber_Add)
 
 ---
 
-### PyNumber_Add abstract.c:951-964
+### PyNumber_Add 
+abstract.c:951-964
 
 ```c
 PyObject *
@@ -140,6 +141,7 @@ PyNumber_Add(PyObject *v, PyObject *w)
 ### object.h
 
 - Defines `PyTypeObject` which is the base for every object in CPython (simplified)
+
 ```c
 typedef struct _typeobject {
     PyObject_VAR_HEAD
@@ -161,9 +163,6 @@ typedef struct _typeobject {
 
 ---
 ### listobject.c
-
-- dicts lists don't implement as number, but do implement as mapping and as sequence
-- sets implement as number and sequence, but not as mapping
 
 ```c
 static PySequenceMethods list_as_sequence = {
@@ -190,7 +189,7 @@ static PySequenceMethods list_as_sequence = {
 - `+=` uses `sq_inplace_concat` which is `list_inplace_concat`
 - `extend` uses `list_extend` as per `listobject.c.h` 
 
-```c
+```cpp
 #define LIST_EXTEND_METHODDEF    \
     {"extend", (PyCFunction)list_extend, METH_O, list_extend__doc__},
 ```
@@ -214,20 +213,25 @@ list_inplace_concat(PyListObject *self, PyObject *other)
 }
 ```
 
-Conclusion `+=` is `extend` with an extra function call!!
+`+=` is `extend` with an extra function call!!
 
 ---
 
 ### Aside: Reference Counting 
 
 - Python uses reference counting for memory management. This is quick and efficient, but not very thread safe and is a big reason for the GIL hanging around.
+- garbage collection too for reference cyles. Think `l=[], l.append(l)`.
+
+---
+
+### Aside: Reference Counting 
+
 ```python
 def func(b):
     a = [1, 2, 3]
     b.append(a)
 ``` 
 - in the above, we create a variable `a` that is only used in the scope of func. However, since `b` has a reference to it, we cannot free it.  
-- garbage collection too for reference cyles. Think `l=[], l.append(l)`.
 - `INCREF` is easy, just increments reference count. `DECREF` decrements, checks if 0 and if so, calls the `deallocate` method
 
 ---
@@ -259,8 +263,11 @@ app1(PyListObject *self, PyObject *v)
 ---
 ### Aside: `Py_DECREF` in `clear`
 
-- `DECREF` doesn't work for `pop` since reference is passed out (`a=lst.pop`), the assignment operator inherits the reference.
-- Furthermore if this didn't happenn `DECREF` would hit 0 if it didn't belong to the list or the new var, and would be cleared instantly.
+- `DECREF` doesn't work for `pop` since reference is passed out (`a=lst.pop`), the reference is inherited by function.
+- Furthermore if this didn't happen `DECREF` would hit 0 if it didn't belong to the list or the new var, and would be cleared instantly.
+
+---
+### Aside: `Py_DECREF` in `clear`
 
 ```c
 static int
