@@ -79,8 +79,8 @@ def main(config):
 
 
 --- 
-@title[ceval.c:1280-1304]
 
+### ceval.c:1280-1304
 
 ```c
 TARGET(BINARY_ADD) {
@@ -116,7 +116,7 @@ TARGET(BINARY_ADD) {
 
 ---
 
-@title[PyNumber_Add abstract.c:951-964]
+### PyNumber_Add abstract.c:951-964
 
 ```c
 PyObject *
@@ -137,7 +137,7 @@ PyNumber_Add(PyObject *v, PyObject *w)
 
 ---
 
-@title[object.h]
+### object.h
 
 - Defines `PyTypeObject` which is the base for every object in CPython (simplified)
 ```c
@@ -160,7 +160,7 @@ typedef struct _typeobject {
 
 
 ---
-@title[listobject.c]
+### listobject.c
 
 - dicts lists don't implement as number, but do implement as mapping and as sequence
 - sets implement as number and sequence, but not as mapping
@@ -185,20 +185,19 @@ static PySequenceMethods list_as_sequence = {
 
 ---
 
-@title[+= vs extend]
+### += vs extend
 
 - `+=` uses `sq_inplace_concat` which is `list_inplace_concat`
-- `extend` uses `list_extend` as per some metaprogramming construct
+- `extend` uses `list_extend` as per `listobject.c.h` 
 
 ```c
 #define LIST_EXTEND_METHODDEF    \
     {"extend", (PyCFunction)list_extend, METH_O, list_extend__doc__},
 ```
 
-
 ---
 
-@title[+= vs extend]
+### += vs extend
 
 ```c
 static PyObject *
@@ -218,7 +217,99 @@ list_inplace_concat(PyListObject *self, PyObject *other)
 Conclusion `+=` is `extend` with an extra function call!!
 
 ---
-@title[Are we done??]
+
+### Aside: Reference Counting 
+
+- Python uses reference counting for memory management. This is quick and efficient, but not very thread safe and is a big reason for the GIL hanging around.
+```python
+def func(b):
+    a = [1, 2, 3]
+    b.append(a)
+``` 
+- in the above, we create a variable `a` that is only used in the scope of func. However, since `b` has a reference to it, we cannot free it.  
+- garbage collection too for reference cyles. Think `l=[], l.append(l)`.
+- `INCREF` is easy, just increments reference count. `DECREF` decrements, checks if 0 and if so, calls the `deallocate` method
+
+---
+
+### Aside: `Py_INCREF` in `append`
+
+```c
+static int
+app1(PyListObject *self, PyObject *v)
+{
+    Py_ssize_t n = PyList_GET_SIZE(self);
+
+    assert (v != NULL);
+    if (n == PY_SSIZE_T_MAX) {
+        PyErr_SetString(PyExc_OverflowError,
+            "cannot add more objects to list");
+        return -1;
+    }
+
+    if (list_resize(self, n+1) < 0)
+        return -1;
+
+    Py_INCREF(v);
+    PyList_SET_ITEM(self, n, v);
+    return 0;
+}
+```
+
+---
+### Aside: `Py_DECREF` in `clear`
+
+- `DECREF` doesn't work for `pop` since reference is passed out (`a=lst.pop`), the assignment operator inherits the reference.
+- Furthermore if this didn't happenn `DECREF` would hit 0 if it didn't belong to the list or the new var, and would be cleared instantly.
+
+```c
+static int
+_list_clear(PyListObject *a)
+{
+    Py_ssize_t i;
+    PyObject **item = a->ob_item;
+    if (item != NULL) {
+        /* Because XDECREF can recursively invoke operations on
+           this list, we make it empty first. */
+        i = Py_SIZE(a);
+        Py_SIZE(a) = 0;
+        a->ob_item = NULL;
+        a->allocated = 0;
+        while (--i >= 0) {
+            Py_XDECREF(item[i]);
+        }
+        PyMem_FREE(item);
+    }
+    /* Never fails; the return value can be ignored.
+       Note that there is no guarantee that the list is actually empty
+       at this point, because XDECREF may have populated it again! */
+    return 0;
+}
+```
+- `XDECREF` doesn't fail on NULL
+- `XDECREF may have populated it again` if `__del__` does naughty things!
+
+
+---
+
+### Aside: List growth, listobject.c:50-59
+```c
+    /* This over-allocates proportional to the list size, making room
+     * for additional growth.  The over-allocation is mild, but is
+     * enough to give linear-time amortized behavior over a long
+     * sequence of appends() in the presence of a poorly-performing
+     * system realloc().
+     * The growth pattern is:  0, 4, 8, 16, 25, 35, 46, 58, 72, 88, ...
+     * Note: new_allocated won't overflow because the largest possible value
+     *       is PY_SSIZE_T_MAX * (9 / 8) + 6 which always fits in a size_t.
+     */
+    new_allocated = (size_t)newsize + (newsize >> 3) + (newsize < 9 ? 3 : 6);
+
+```
+- not quite a linked list, not quite a vector!!
+
+---
+### Are we done??]
 
 - Hell nah, let's use this knowledge to build a version of python with additional syntax
 - we can't change existing syntax too easily since we'll interfere with existing operations, but we can add new syntax
@@ -227,9 +318,10 @@ Conclusion `+=` is `extend` with an extra function call!!
 
 ---
 
-@title[Live Coding Demo]
+### Live Coding Demo
 
 - building on 3.7 on commit: `8f7bb100d0fa7fb2714f3953b5b627878277c7c6`
-- branch ` ` has solution in case of failure
-- configured build output is `~/Documents/testpython` 
-- code avail on github `nayyarv/cpython`
+- branch `listnum` has solution in case of failure. Use `git diff master` to show differences
+- branch off top commit to allow comparison to fixed code
+- configured build output is `~/Documents/testpython`
+- hacked avail on github `nayyarv/cpython`
