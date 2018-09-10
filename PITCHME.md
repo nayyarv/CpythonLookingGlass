@@ -263,7 +263,7 @@ app1(PyListObject *self, PyObject *v)
 ---
 ### Aside: `Py_DECREF` in `clear`
 
-- `DECREF` doesn't work for `pop` since reference is passed out (`a=lst.pop`), the reference is inherited by function.
+- `DECREF` doesn't work for `pop` since reference is passed out (`a=lst.pop`), the reference is inherited by variable.
 - Furthermore if this didn't happen `DECREF` would hit 0 if it didn't belong to the list or the new var, and would be cleared instantly.
 
 ---
@@ -299,7 +299,8 @@ _list_clear(PyListObject *a)
 
 ---
 
-### Aside: List growth, listobject.c:50-59
+### Aside: List growth
+listobject.c:50-59
 ```c
     /* This over-allocates proportional to the list size, making room
      * for additional growth.  The over-allocation is mild, but is
