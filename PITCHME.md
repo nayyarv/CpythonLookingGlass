@@ -220,7 +220,7 @@ list_inplace_concat(PyListObject *self, PyObject *other)
 ### Aside: Reference Counting 
 
 - Python uses reference counting for memory management. This is quick and efficient, but not very thread safe and is a big reason for the GIL hanging around.
-- garbage collection too for reference cyles. Think `l=[], l.append(l)`.
+- garbage collection too for reference cyles. Think `l=[]; l.append(l)`.
 
 ---
 
@@ -317,7 +317,7 @@ listobject.c:50-59
 - not quite a linked list, not quite a vector!!
 
 ---
-### Are we done??]
+### Are we done??
 
 - Hell nah, let's use this knowledge to build a version of python with additional syntax
 - we can't change existing syntax too easily since we'll interfere with existing operations, but we can add new syntax
