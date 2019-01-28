@@ -1,6 +1,6 @@
-## Through the CPython Looking Glass
+## Binary Ops in Cpython
 <br><br>
-#### `extend` and `+=` on lists
+#### Inspired by `extend` vs `+=` for lists
 #### Varun Nayyar
 
 ---
